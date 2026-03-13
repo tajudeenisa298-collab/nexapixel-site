@@ -136,11 +136,13 @@ function HeroVideoLayer({ src }) {
           <div className="absolute left-1/2 top-1/2 w-[78%] max-w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-[28px] border border-white/10 bg-slate-950/70 p-6 text-left shadow-2xl backdrop-blur-xl">
             <div className="flex items-center gap-3 text-cyan-200">
               <Film className="h-5 w-5" />
-              <span className="text-sm font-semibold uppercase tracking-[0.2em]">Hero video not loaded yet</span>
+              <span className="text-sm font-semibold uppercase tracking-[0.2em]">
+  Video preview unavailable
+</span>
             </div>
             <p className="mt-4 text-sm leading-6 text-slate-300">
-              The page is ready for a real MP4, but the file is missing from your project right now. Add <span className="font-semibold text-white">logistics-flow-hero.mp4</span> to <span className="font-semibold text-white">/public</span> to make the hero video appear.
-            </p>
+  The hero video preview is currently unavailable. Add <span className="font-semibold text-white">logistics-flow-hero.mp4</span> to <span className="font-semibold text-white">/public</span> to display it here.
+</p>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               {HERO_VIDEO_SHOTLIST.slice(0, 4).map((item) => (
                 <div key={item} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-xs leading-5 text-slate-300">
