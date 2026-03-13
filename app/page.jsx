@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 
 const HERO_VIDEO_SRC = "/logistics-flow-hero.mp4";
-const HERO_VIDEO_POSTER = "/logistics-flow-poster.jpg";
 
 const HERO_VIDEO_SHOTLIST = [
   "Slow aerial or elevated movement over a container yard at blue hour",
@@ -109,7 +108,6 @@ function HeroVideoLayer({ src }) {
           loop
           playsInline
           preload="auto"
-          poster={HERO_VIDEO_POSTER}
           onLoadedMetadata={(event) => {
             try {
               event.currentTarget.playbackRate = 0.82;
@@ -158,7 +156,7 @@ function HeroVideoLayer({ src }) {
         Premium logistics hero film enabled
       </div>
       <div className="absolute bottom-5 left-5 max-w-[420px] rounded-2xl border border-white/10 bg-slate-950/55 px-4 py-3 text-xs leading-5 text-slate-300 backdrop-blur-md">
-        Best-performing hero style: cinematic logistics motion, route-line overlays, container and warehouse movement, no talking heads, no busy stock montage. Use <span className="font-semibold text-cyan-200">/public/logistics-flow-hero.mp4</span> and optionally <span className="font-semibold text-cyan-200">/public/logistics-flow-poster.jpg</span>.
+        Best-performing hero style: cinematic logistics motion, route-line overlays, container and warehouse movement, no talking heads, no busy stock montage. Use <span className="font-semibold text-cyan-200">/public/logistics-flow-hero.mp4</span>.
       </div>
     </div>
   );
@@ -171,7 +169,7 @@ function BackgroundStage({ progress }) {
   const rotateY = useTransform(progress, [0, 1], [-8, 7]);
 
   return (
-    <motion.div style={{ y, scale }} className="relative h-[560px] w-full [perspective:1800px]">
+    <motion.div style={{ y, scale }} className="relative h-[420px] w-full [perspective:1800px] md:h-[500px] lg:h-[560px]">
       <motion.div
         className="absolute inset-0 overflow-hidden rounded-[32px] border border-white/10 bg-slate-950 shadow-[0_30px_120px_rgba(15,23,42,0.55)]"
         style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
@@ -413,35 +411,35 @@ export default function LandingPage() {
 
       <main>
         <section ref={heroRef} className="relative overflow-hidden">
-          <div className="mx-auto grid max-w-7xl gap-14 px-6 py-20 lg:grid-cols-[1fr_1.1fr] lg:items-center lg:py-28">
+          <div className="mx-auto grid max-w-7xl gap-8 px-6 py-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-center lg:gap-10 lg:py-12">
             <motion.div className="relative z-10" style={{ y: heroTextY, opacity: heroTextOpacity }}>
               <FloatingText delay={0.1}>
-                <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-white/5 px-4 py-2 text-sm text-cyan-200 backdrop-blur-sm">
+                <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-white/5 px-4 py-2 text-sm text-cyan-200 backdrop-blur-sm">
                   <Waves className="h-4 w-4" />
                   For small and mid-sized logistics teams
                 </div>
               </FloatingText>
 
               <motion.h1
-                className="max-w-3xl text-5xl font-black leading-[0.95] tracking-tight md:text-6xl lg:text-7xl"
+                className="max-w-2xl text-4xl font-black leading-[0.95] tracking-tight md:text-5xl lg:text-6xl"
                 initial="hidden"
                 animate="show"
                 variants={fadeUp}
                 custom={0.2}
               >
-                Make complex logistics and supply chain solutions easy to understand with
+                Explain complex logistics services with
                 <motion.span
                   className="mt-2 block bg-gradient-to-r from-cyan-300 via-blue-300 to-indigo-300 bg-clip-text text-transparent"
                   animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
                   transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
                   style={{ backgroundSize: "200% 200%" }}
                 >
-                  clear 60–90 second explainer videos.
+                  clear 60–90 second videos.
                 </motion.span>
               </motion.h1>
 
               <motion.p
-                className="mt-7 max-w-2xl text-lg leading-8 text-slate-300 md:text-xl"
+                className="mt-4 max-w-xl text-base leading-7 text-slate-300 md:text-lg"
                 initial="hidden"
                 animate="show"
                 variants={fadeUp}
@@ -451,7 +449,7 @@ export default function LandingPage() {
               </motion.p>
 
               <motion.div
-                className="mt-9 flex flex-col gap-4 sm:flex-row"
+                className="mt-6 flex flex-col gap-3 sm:flex-row"
                 initial="hidden"
                 animate="show"
                 variants={fadeUp}
@@ -478,7 +476,7 @@ export default function LandingPage() {
               </motion.div>
 
               <motion.div
-                className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3"
+                className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-3 lg:gap-6"
                 initial="hidden"
                 animate="show"
                 variants={fadeUp}
@@ -494,21 +492,22 @@ export default function LandingPage() {
                     variants={cardLift}
                     initial="rest"
                     whileHover="hover"
-                    className="rounded-[24px] border border-white/10 bg-white/5 p-5 backdrop-blur-xl [transform-style:preserve-3d]"
+                    className="rounded-[24px] border border-white/10 bg-white/5 px-5 py-6 backdrop-blur-xl [transform-style:preserve-3d]"
                   >
                     <motion.div
                       className="mb-3 h-1.5 w-14 rounded-full bg-gradient-to-r from-cyan-300 via-blue-400 to-indigo-400"
                       animate={{ width: [56, 80, 56] }}
                       transition={{ duration: 4 + index, repeat: Infinity, ease: "easeInOut" }}
                     />
-                    <div className="text-2xl font-bold text-white">{title}</div>
-                    <div className="mt-1 text-sm leading-6 text-slate-300">{copy}</div>
+                    <div className="text-2xl font-bold leading-tight text-white">{title}</div>
+                    <div className="mt-3 text-sm leading-6 text-slate-300">{copy}</div>
                   </motion.div>
                 ))}
               </motion.div>
             </motion.div>
 
             <motion.div
+              className="w-full self-start lg:justify-self-end"
               initial={{ opacity: 0, scale: 0.96, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
@@ -516,8 +515,7 @@ export default function LandingPage() {
               <BackgroundStage progress={heroProgress} />
             </motion.div>
           </div>
-
-          </section>
+        </section>
 
         <ScrollReactiveSection id="how-it-works" className="relative py-24">
           <SectionGlow />
@@ -666,7 +664,6 @@ export default function LandingPage() {
               className="rounded-[36px] border border-white/10 bg-white/5 p-8 shadow-[0_30px_120px_rgba(15,23,42,0.28)] backdrop-blur-2xl md:p-12"
             >
               <div className="mx-auto max-w-2xl text-center">
-                <div className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-200">Call to action</div>
                 <h2 className="mt-4 text-3xl font-bold tracking-tight text-white md:text-5xl">See if this fits</h2>
                 <p className="mt-5 text-lg leading-8 text-slate-300">
                   If you run a logistics or supply chain business and want a clearer way to explain your solution, leave your details and we’ll let you know when early access opens.
