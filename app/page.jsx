@@ -782,9 +782,9 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-4 text-sm text-slate-400">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2">
-              <Film className="h-4 w-4 text-cyan-300" />
-              Logistics-focused hero film
-            </div>
+  <Film className="h-4 w-4 text-cyan-300" />
+  Logistics-focused hero film
+</div>
             <a href="#interest-form" className="font-semibold text-cyan-200 transition hover:text-white">
               See if this fits
             </a>
