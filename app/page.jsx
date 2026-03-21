@@ -643,10 +643,22 @@ export default function LandingPage() {
                 variants={fadeUp}
                 custom={0.5}
               >
-                <ShimmerButton href="#interest-form">
-                  Get a Free Storyboard Concept
-                  <ChevronRight className="h-4 w-4" />
-                </ShimmerButton>
+                <motion.button
+  type="submit"
+  disabled={isSubmitting}
+  whileHover={isSubmitting ? {} : { scale: 1.03, y: -3 }}
+  whileTap={isSubmitting ? {} : { scale: 0.97 }}
+  className="relative mt-2 inline-flex w-full items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 px-7 py-4 text-base font-semibold text-white shadow-[0_18px_60px_rgba(59,130,246,0.4)] disabled:cursor-not-allowed disabled:opacity-70"
+>
+  <motion.span
+    className="absolute inset-y-0 left-[-60%] w-[40%] bg-gradient-to-r from-transparent via-white/25 to-transparent blur-sm"
+    animate={isSubmitting ? {} : { x: ["0%", "400%"] }}
+    transition={{ duration: 2.8, repeat: Infinity, ease: "linear", repeatDelay: 1.5 }}
+  />
+  {isSubmitting ? "Sending..." : "Request Free Storyboard Concept"}
+  <ArrowRight className="h-4 w-4" />
+</motion.button>
+
 
                 <motion.a
                   href="#how-it-works"
