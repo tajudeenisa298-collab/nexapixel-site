@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
   Play,
@@ -13,6 +13,8 @@ import {
   Clock,
   CheckCircle2,
   Zap,
+  CheckCircle,
+  Mail,
 } from "lucide-react";
 
 // ─── Config ───────────────────────────────────────────────────────────────────
@@ -123,7 +125,7 @@ function AnimatedGrid() {
   );
 }
 
-// ─── Shimmer Button (anchor) ──────────────────────────────────────────────────
+// ─── Shimmer Button (anchor — navigation only, NOT for form submit) ───────────
 
 function ShimmerButton({
   href,
@@ -185,7 +187,7 @@ function HeroVideoLayer({ src }: { src: string }) {
       {/* Colour overlay */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(56,189,248,0.22),transparent_24%),radial-gradient(circle_at_80%_24%,rgba(59,130,246,0.22),transparent_18%),radial-gradient(circle_at_55%_75%,rgba(99,102,241,0.18),transparent_22%),linear-gradient(180deg,rgba(2,6,23,0.18),rgba(2,6,23,0.88))]" />
 
-      {/* Fallback when no video file present */}
+      {/* Fallback gradient when no video */}
       {videoFailed && (
         <motion.div
           className="absolute inset-0"
@@ -469,15 +471,106 @@ function ScrollReactiveSection({
   );
 }
 
+// ─── Thank You State ──────────────────────────────────────────────────────────
+
+function ThankYouCard() {
+  return (
+    <motion.div
+      key="thankyou"
+      initial={{ opacity: 0, scale: 0.92, y: 24 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95, y: -16 }}
+      transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
+      className="flex flex-col items-center gap-6 py-10 text-center"
+    >
+      {/* Animated checkmark circle */}
+      <motion.div
+        initial={{ scale: 0, rotate: -20 }}
+        animate={{ scale: 1, rotate: 0 }}
+        transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+        className="relative flex h-20 w-20 items-center justify-center rounded-full border border-emerald-400/30 bg-emerald-400/10"
+      >
+        {/* Pulse ring */}
+        <motion.div
+          className="absolute inset-0 rounded-full border border-emerald-400/40"
+          animate={{ scale: [1, 1.5, 1], opacity: [0.6, 0, 0.6] }}
+          transition={{ duration: 2.5, repeat: Infinity, ease: "easeOut" }}
+        />
+        <CheckCircle className="h-9 w-9 text-emerald-300" />
+      </motion.div>
+
+      {/* Heading */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.65, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <h3 className="text-2xl font-bold text-white md:text-3xl">
+          You're in. We'll be in touch within 48 hours.
+        </h3>
+        <p className="mt-3 text-base leading-7 text-slate-300">
+          We're already looking at your website. Your free custom storyboard
+          concept is being built and will land in your inbox shortly.
+        </p>
+      </motion.div>
+
+      {/* What happens next */}
+      <motion.div
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.65, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
+        className="w-full max-w-md rounded-[24px] border border-white/10 bg-white/5 p-6 text-left"
+      >
+        <div className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-cyan-200">
+          <Mail className="h-4 w-4" />
+          What happens next
+        </div>
+        <div className="space-y-4">
+          {[
+            {
+              step: "1",
+              text: "We research your logistics offer and identify the #1 clarity gap",
+            },
+            {
+              step: "2",
+              text: "We build a free 15-second storyboard concept tailored to your service",
+            },
+            {
+              step: "3",
+              text: "We email it to you within 48 hours — no call required to receive it",
+            },
+          ].map(({ step, text }) => (
+            <div key={step} className="flex items-start gap-3">
+              <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-cyan-300/15 text-sm font-bold text-cyan-200">
+                {step}
+              </div>
+              <p className="text-sm leading-6 text-slate-300">{text}</p>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Soft close note */}
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6, delay: 0.65 }}
+        className="text-sm text-slate-500"
+      >
+        Check your inbox — including your spam folder — for an email from{" "}
+        <span className="text-slate-400">isa@nexapixelai.com</span>
+      </motion.p>
+    </motion.div>
+  );
+}
+
 // ─── Main Landing Page ────────────────────────────────────────────────────────
 
 export default function LandingPage() {
   const heroRef = useRef<HTMLElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitState, setSubmitState] = useState<{
-    type: "idle" | "success" | "error";
-    message: string;
-  }>({ type: "idle", message: "" });
+  const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const { scrollYProgress } = useScroll();
   const { scrollYProgress: heroProgress } = useScroll({
@@ -489,45 +582,34 @@ export default function LandingPage() {
   const heroTextY = useTransform(heroProgress, [0, 1], [0, -120]);
   const heroTextOpacity = useTransform(heroProgress, [0, 0.75, 1], [1, 0.9, 0.5]);
 
-  // ── Form Submit Handler (Web3Forms) ────────────────────────────────────────
+  // ── Form Submit Handler ────────────────────────────────────────────────────
 
   const handleLeadSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
     const formData = new FormData(form);
-
-    // Inject Web3Forms access key
     formData.append("access_key", WEB3FORMS_KEY);
 
     setIsSubmitting(true);
-    setSubmitState({ type: "idle", message: "" });
+    setSubmitError("");
 
     try {
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         body: formData,
       });
-
       const data = await response.json();
 
       if (data.success) {
         form.reset();
-        setSubmitState({
-          type: "success",
-          message:
-            "You're in. We'll build your free storyboard concept and send it to your email within 48 hours.",
-        });
+        setSubmitted(true);
       } else {
         throw new Error(data.message || "Something went wrong. Please try again.");
       }
     } catch (error) {
-      setSubmitState({
-        type: "error",
-        message:
-          error instanceof Error
-            ? error.message
-            : "Something went wrong. Please try again.",
-      });
+      setSubmitError(
+        error instanceof Error ? error.message : "Something went wrong. Please try again."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -643,22 +725,10 @@ export default function LandingPage() {
                 variants={fadeUp}
                 custom={0.5}
               >
-                <motion.button
-  type="submit"
-  disabled={isSubmitting}
-  whileHover={isSubmitting ? {} : { scale: 1.03, y: -3 }}
-  whileTap={isSubmitting ? {} : { scale: 0.97 }}
-  className="relative mt-2 inline-flex w-full items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 px-7 py-4 text-base font-semibold text-white shadow-[0_18px_60px_rgba(59,130,246,0.4)] disabled:cursor-not-allowed disabled:opacity-70"
->
-  <motion.span
-    className="absolute inset-y-0 left-[-60%] w-[40%] bg-gradient-to-r from-transparent via-white/25 to-transparent blur-sm"
-    animate={isSubmitting ? {} : { x: ["0%", "400%"] }}
-    transition={{ duration: 2.8, repeat: Infinity, ease: "linear", repeatDelay: 1.5 }}
-  />
-  {isSubmitting ? "Sending..." : "Request Free Storyboard Concept"}
-  <ArrowRight className="h-4 w-4" />
-</motion.button>
-
+                <ShimmerButton href="#interest-form">
+                  Get a Free Storyboard Concept
+                  <ChevronRight className="h-4 w-4" />
+                </ShimmerButton>
 
                 <motion.a
                   href="#how-it-works"
@@ -1003,146 +1073,156 @@ export default function LandingPage() {
               transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
               className="rounded-[36px] border border-white/10 bg-white/5 p-8 shadow-[0_30px_120px_rgba(15,23,42,0.28)] backdrop-blur-2xl md:p-12"
             >
-              <div className="mx-auto max-w-2xl text-center">
-                <div className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-200">
-                  Zero Risk Offer
-                </div>
-                <h2 className="mt-4 text-3xl font-bold tracking-tight text-white md:text-5xl">
-                  Let us map out your offer — for free.
-                </h2>
-                <p className="mt-5 text-lg leading-8 text-slate-300">
-                  Send us your website and we'll build a custom 15-second
-                  storyboard concept for your specific logistics offer —
-                  completely free. If you like it, we talk. If you don't, you
-                  keep it. Zero risk.
-                </p>
-              </div>
-
-              <form
-                className="mt-10 grid gap-5"
-                onSubmit={handleLeadSubmit}
-              >
-                {/* Web3Forms hidden fields */}
-                <input
-                  type="hidden"
-                  name="subject"
-                  value="New Nexa Pixel Storyboard Request"
-                />
-                <input
-                  type="hidden"
-                  name="from_name"
-                  value="Nexa Pixel Website"
-                />
-                {/* Honeypot spam trap */}
-                <input
-                  type="checkbox"
-                  name="botcheck"
-                  className="hidden"
-                  style={{ display: "none" }}
-                />
-
-                {/* Name + Email */}
-                <div className="grid gap-5 md:grid-cols-2">
-                  <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-200">
-                      Full Name
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      required
-                      placeholder="Your name"
-                      className="w-full rounded-[22px] border border-white/10 bg-slate-950/60 px-4 py-4 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-300/20"
-                    />
-                  </div>
-                  <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-200">
-                      Work Email
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      required
-                      placeholder="you@company.com"
-                      className="w-full rounded-[22px] border border-white/10 bg-slate-950/60 px-4 py-4 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-300/20"
-                    />
-                  </div>
-                </div>
-
-                {/* Website URL */}
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-200">
-                    Company Website
-                  </label>
-                  <input
-                    type="url"
-                    name="website"
-                    required
-                    placeholder="https://yourcompany.com"
-                    className="w-full rounded-[22px] border border-white/10 bg-slate-950/60 px-4 py-4 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-300/20"
-                  />
-                </div>
-
-                {/* Optional message */}
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-200">
-                    What's the #1 thing prospects misunderstand about your
-                    service?{" "}
-                    <span className="text-slate-500">(optional)</span>
-                  </label>
-                  <textarea
-                    rows={4}
-                    name="message"
-                    placeholder="e.g. They don't realise we handle customs clearance end-to-end, not just freight..."
-                    className="w-full rounded-[22px] border border-white/10 bg-slate-950/60 px-4 py-4 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-300/20"
-                  />
-                </div>
-
-                {/* Submit button with shimmer */}
-                <motion.button
-                  type="submit"
-                  disabled={isSubmitting}
-                  whileHover={isSubmitting ? {} : { scale: 1.03, y: -3 }}
-                  whileTap={isSubmitting ? {} : { scale: 0.97 }}
-                  className="relative mt-2 inline-flex w-full items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 px-7 py-4 text-base font-semibold text-white shadow-[0_18px_60px_rgba(59,130,246,0.4)] disabled:cursor-not-allowed disabled:opacity-70"
-                >
-                  <motion.span
-                    className="absolute inset-y-0 left-[-60%] w-[40%] bg-gradient-to-r from-transparent via-white/25 to-transparent blur-sm"
-                    animate={isSubmitting ? {} : { x: ["0%", "400%"] }}
-                    transition={{
-                      duration: 2.8,
-                      repeat: Infinity,
-                      ease: "linear",
-                      repeatDelay: 1.5,
-                    }}
-                  />
-                  {isSubmitting
-                    ? "Sending..."
-                    : "Request Free Storyboard Concept"}
-                  <ArrowRight className="h-4 w-4" />
-                </motion.button>
-
-                {/* Success / Error feedback */}
-                {submitState.type !== "idle" && (
+              <AnimatePresence mode="wait">
+                {submitted ? (
+                  /* ── Thank You State ── */
+                  <ThankYouCard key="thankyou" />
+                ) : (
+                  /* ── Form State ── */
                   <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                    className={`rounded-[22px] border px-4 py-4 text-sm leading-6 ${
-                      submitState.type === "success"
-                        ? "border-emerald-400/25 bg-emerald-400/10 text-emerald-100"
-                        : "border-rose-400/25 bg-rose-400/10 text-rose-100"
-                    }`}
+                    key="form"
+                    initial={{ opacity: 1 }}
+                    exit={{ opacity: 0, scale: 0.97, y: -12 }}
+                    transition={{ duration: 0.4 }}
                   >
-                    {submitState.message}
+                    <div className="mx-auto max-w-2xl text-center">
+                      <div className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-200">
+                        Zero Risk Offer
+                      </div>
+                      <h2 className="mt-4 text-3xl font-bold tracking-tight text-white md:text-5xl">
+                        Let us map out your offer — for free.
+                      </h2>
+                      <p className="mt-5 text-lg leading-8 text-slate-300">
+                        Send us your website and we'll build a custom 15-second
+                        storyboard concept for your specific logistics offer —
+                        completely free. If you like it, we talk. If you don't,
+                        you keep it. Zero risk.
+                      </p>
+                    </div>
+
+                    <form
+                      className="mt-10 grid gap-5"
+                      onSubmit={handleLeadSubmit}
+                    >
+                      {/* Web3Forms hidden fields */}
+                      <input
+                        type="hidden"
+                        name="subject"
+                        value="New Nexa Pixel Storyboard Request"
+                      />
+                      <input
+                        type="hidden"
+                        name="from_name"
+                        value="Nexa Pixel Website"
+                      />
+                      {/* Honeypot spam trap */}
+                      <input
+                        type="checkbox"
+                        name="botcheck"
+                        className="hidden"
+                        style={{ display: "none" }}
+                      />
+
+                      {/* Name + Email */}
+                      <div className="grid gap-5 md:grid-cols-2">
+                        <div>
+                          <label className="mb-2 block text-sm font-medium text-slate-200">
+                            Full Name
+                          </label>
+                          <input
+                            type="text"
+                            name="name"
+                            required
+                            placeholder="Your name"
+                            className="w-full rounded-[22px] border border-white/10 bg-slate-950/60 px-4 py-4 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-300/20"
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-2 block text-sm font-medium text-slate-200">
+                            Work Email
+                          </label>
+                          <input
+                            type="email"
+                            name="email"
+                            required
+                            placeholder="you@company.com"
+                            className="w-full rounded-[22px] border border-white/10 bg-slate-950/60 px-4 py-4 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-300/20"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Website URL */}
+                      <div>
+                        <label className="mb-2 block text-sm font-medium text-slate-200">
+                          Company Website
+                        </label>
+                        <input
+                          type="url"
+                          name="website"
+                          required
+                          placeholder="https://yourcompany.com"
+                          className="w-full rounded-[22px] border border-white/10 bg-slate-950/60 px-4 py-4 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-300/20"
+                        />
+                      </div>
+
+                      {/* Optional message */}
+                      <div>
+                        <label className="mb-2 block text-sm font-medium text-slate-200">
+                          What's the #1 thing prospects misunderstand about
+                          your service?{" "}
+                          <span className="text-slate-500">(optional)</span>
+                        </label>
+                        <textarea
+                          rows={4}
+                          name="message"
+                          placeholder="e.g. They don't realise we handle customs clearance end-to-end, not just freight..."
+                          className="w-full rounded-[22px] border border-white/10 bg-slate-950/60 px-4 py-4 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-300/20"
+                        />
+                      </div>
+
+                      {/* ── Submit button — proper <button type="submit"> ── */}
+                      <motion.button
+                        type="submit"
+                        disabled={isSubmitting}
+                        whileHover={isSubmitting ? {} : { scale: 1.03, y: -3 }}
+                        whileTap={isSubmitting ? {} : { scale: 0.97 }}
+                        className="relative mt-2 inline-flex w-full items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 px-7 py-4 text-base font-semibold text-white shadow-[0_18px_60px_rgba(59,130,246,0.4)] disabled:cursor-not-allowed disabled:opacity-70"
+                      >
+                        <motion.span
+                          className="absolute inset-y-0 left-[-60%] w-[40%] bg-gradient-to-r from-transparent via-white/25 to-transparent blur-sm"
+                          animate={isSubmitting ? {} : { x: ["0%", "400%"] }}
+                          transition={{
+                            duration: 2.8,
+                            repeat: Infinity,
+                            ease: "linear",
+                            repeatDelay: 1.5,
+                          }}
+                        />
+                        {isSubmitting
+                          ? "Sending..."
+                          : "Request Free Storyboard Concept"}
+                        <ArrowRight className="h-4 w-4" />
+                      </motion.button>
+
+                      {/* Error message */}
+                      {submitError && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="rounded-[22px] border border-rose-400/25 bg-rose-400/10 px-4 py-4 text-sm leading-6 text-rose-100"
+                        >
+                          {submitError}
+                        </motion.div>
+                      )}
+
+                      <p className="text-center text-sm text-slate-400">
+                        No credit card required. You'll receive your custom
+                        storyboard concept via email within 48 hours.
+                      </p>
+                    </form>
                   </motion.div>
                 )}
-
-                <p className="text-center text-sm text-slate-400">
-                  No credit card required. You'll receive your custom storyboard
-                  concept via email within 48 hours.
-                </p>
-              </form>
+              </AnimatePresence>
             </motion.div>
           </div>
         </ScrollReactiveSection>
