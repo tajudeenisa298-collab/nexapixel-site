@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import {
   ArrowRight,
   Play,
@@ -10,6 +10,9 @@ import {
   Sparkles,
   ChevronRight,
   Film,
+  Clock,
+  CheckCircle2,
+  Zap,
 } from "lucide-react";
 
 const HERO_VIDEO_SRC = "/logistics-flow-hero.mp4";
@@ -25,33 +28,51 @@ const HERO_VIDEO_SHOTLIST = [
   "Final calm wide shot with elegant motion that feels premium and trustworthy",
 ];
 
+// ─── Animation Variants ───────────────────────────────────────────────────────
+
 const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
+  hidden: { opacity: 0, y: 32 },
   show: (delay = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.9, delay, ease: [0.16, 1, 0.3, 1] },
   }),
 };
 
-const cardLift = {
-  rest: { y: 0, rotateX: 0, rotateY: 0 },
-  hover: {
-    y: -10,
-    rotateX: 4,
-    rotateY: -4,
-    transition: { duration: 0.35, ease: "easeOut" },
+const staggerContainer = {
+  hidden: {},
+  show: {
+    transition: { staggerChildren: 0.1, delayChildren: 0.2 },
   },
 };
+
+const staggerItem = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
+};
+
+const cardLift = {
+  rest: { y: 0, rotateX: 0, rotateY: 0, scale: 1 },
+  hover: {
+    y: -12,
+    rotateX: 5,
+    rotateY: -5,
+    scale: 1.02,
+    transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
+  },
+};
+
+// ─── Floating Orb ─────────────────────────────────────────────────────────────
 
 function FloatingOrb({ className, delay = 0, duration = 12 }) {
   return (
     <motion.div
       className={className}
       animate={{
-        y: [0, -22, 12, 0],
-        x: [0, 14, -10, 0],
-        scale: [1, 1.08, 0.96, 1],
+        y: [0, -28, 14, 0],
+        x: [0, 18, -12, 0],
+        scale: [1, 1.1, 0.94, 1],
+        opacity: [0.6, 0.9, 0.7, 0.6],
       }}
       transition={{ duration, repeat: Infinity, ease: "easeInOut", delay }}
     />
@@ -62,16 +83,16 @@ function SectionGlow() {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
       <FloatingOrb
-        className="absolute left-[8%] top-12 h-40 w-40 rounded-full bg-cyan-400/20 blur-3xl"
+        className="absolute left-[8%] top-12 h-48 w-48 rounded-full bg-cyan-400/20 blur-3xl"
         duration={14}
       />
       <FloatingOrb
-        className="absolute right-[10%] top-24 h-56 w-56 rounded-full bg-blue-500/20 blur-3xl"
+        className="absolute right-[10%] top-24 h-64 w-64 rounded-full bg-blue-500/20 blur-3xl"
         delay={1.2}
         duration={16}
       />
       <FloatingOrb
-        className="absolute bottom-0 left-1/3 h-52 w-52 rounded-full bg-indigo-500/15 blur-3xl"
+        className="absolute bottom-0 left-1/3 h-56 w-56 rounded-full bg-indigo-500/15 blur-3xl"
         delay={0.5}
         duration={18}
       />
@@ -79,21 +100,45 @@ function SectionGlow() {
   );
 }
 
+// ─── Animated Grid ────────────────────────────────────────────────────────────
+
 function AnimatedGrid() {
   return (
     <motion.div
-      className="absolute inset-0 opacity-25"
-      animate={{ backgroundPosition: ["0px 0px", "0px 40px", "40px 80px"] }}
-      transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+      className="absolute inset-0 opacity-20"
+      animate={{ backgroundPosition: ["0px 0px", "0px 48px", "48px 96px"] }}
+      transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
       style={{
         backgroundImage:
-          "linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px)",
+          "linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px)",
         backgroundSize: "48px 48px",
-        maskImage: "radial-gradient(circle at center, black 45%, transparent 85%)",
+        maskImage: "radial-gradient(circle at center, black 40%, transparent 80%)",
       }}
     />
   );
 }
+
+// ─── Shimmer Button ───────────────────────────────────────────────────────────
+
+function ShimmerButton({ href, children, className = "" }) {
+  return (
+    <motion.a
+      href={href}
+      whileHover={{ scale: 1.04, y: -3 }}
+      whileTap={{ scale: 0.97 }}
+      className={`relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 px-7 py-4 text-base font-semibold text-white shadow-[0_18px_60px_rgba(59,130,246,0.4)] ${className}`}
+    >
+      <motion.span
+        className="absolute inset-y-0 left-[-60%] w-[40%] bg-gradient-to-r from-transparent via-white/25 to-transparent blur-sm"
+        animate={{ x: ["0%", "400%"] }}
+        transition={{ duration: 2.8, repeat: Infinity, ease: "linear", repeatDelay: 1.5 }}
+      />
+      {children}
+    </motion.a>
+  );
+}
+
+// ─── Hero Video Layer ─────────────────────────────────────────────────────────
 
 function HeroVideoLayer({ src }) {
   const [videoFailed, setVideoFailed] = useState(false);
@@ -109,9 +154,7 @@ function HeroVideoLayer({ src }) {
           playsInline
           preload="auto"
           onLoadedMetadata={(event) => {
-            try {
-              event.currentTarget.playbackRate = 0.82;
-            } catch {}
+            try { event.currentTarget.playbackRate = 0.82; } catch {}
           }}
           onError={() => setVideoFailed(true)}
         >
@@ -136,13 +179,12 @@ function HeroVideoLayer({ src }) {
           <div className="absolute left-1/2 top-1/2 w-[78%] max-w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-[28px] border border-white/10 bg-slate-950/70 p-6 text-left shadow-2xl backdrop-blur-xl">
             <div className="flex items-center gap-3 text-cyan-200">
               <Film className="h-5 w-5" />
-              <span className="text-sm font-semibold uppercase tracking-[0.2em]">
-  Video preview unavailable
-</span>
+              <span className="text-sm font-semibold uppercase tracking-[0.2em]">Video preview unavailable</span>
             </div>
             <p className="mt-4 text-sm leading-6 text-slate-300">
-  The hero video preview is currently unavailable. Add <span className="font-semibold text-white">logistics-flow-hero.mp4</span> to <span className="font-semibold text-white">/public</span> to display it here.
-</p>
+              Add <span className="font-semibold text-white">logistics-flow-hero.mp4</span> to{" "}
+              <span className="font-semibold text-white">/public</span> to display the hero film.
+            </p>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               {HERO_VIDEO_SHOTLIST.slice(0, 4).map((item) => (
                 <div key={item} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-xs leading-5 text-slate-300">
@@ -153,22 +195,23 @@ function HeroVideoLayer({ src }) {
           </div>
         </motion.div>
       )}
-
-      <div className="absolute left-5 top-5 rounded-full border border-white/10 bg-slate-950/65 px-4 py-2 text-xs text-slate-200 backdrop-blur-md">
-        Premium logistics hero film enabled
-      </div>
-      <div className="absolute bottom-5 left-5 max-w-[420px] rounded-2xl border border-white/10 bg-slate-950/55 px-4 py-3 text-xs leading-5 text-slate-300 backdrop-blur-md">
-        Best-performing hero style: cinematic logistics motion, route-line overlays, container and warehouse movement, no talking heads, no busy stock montage. Use <span className="font-semibold text-cyan-200">/public/logistics-flow-hero.mp4</span>.
-      </div>
     </div>
   );
 }
 
+// ─── Background Stage (Hero Card) ─────────────────────────────────────────────
+
 function BackgroundStage({ progress }) {
-  const y = useTransform(progress, [0, 1], [0, 120]);
-  const scale = useTransform(progress, [0, 1], [1, 0.92]);
-  const rotateX = useTransform(progress, [0, 1], [8, 0]);
-  const rotateY = useTransform(progress, [0, 1], [-8, 7]);
+  const rawY = useTransform(progress, [0, 1], [0, 130]);
+  const rawScale = useTransform(progress, [0, 1], [1, 0.91]);
+  const rawRotateX = useTransform(progress, [0, 1], [8, 0]);
+  const rawRotateY = useTransform(progress, [0, 1], [-8, 7]);
+
+  // Spring-smooth all parallax transforms for fluid feel
+  const y = useSpring(rawY, { stiffness: 60, damping: 20 });
+  const scale = useSpring(rawScale, { stiffness: 60, damping: 20 });
+  const rotateX = useSpring(rawRotateX, { stiffness: 60, damping: 20 });
+  const rotateY = useSpring(rawRotateY, { stiffness: 60, damping: 20 });
 
   return (
     <motion.div style={{ y, scale }} className="relative h-[420px] w-full [perspective:1800px] md:h-[500px] lg:h-[560px]">
@@ -179,25 +222,27 @@ function BackgroundStage({ progress }) {
         <HeroVideoLayer src={HERO_VIDEO_SRC} />
         <AnimatedGrid />
 
+        {/* Ambient orbs inside card */}
         <motion.div
           className="absolute -left-8 top-12 h-40 w-40 rounded-full bg-cyan-400/25 blur-3xl"
-          animate={{ x: [0, 28, 0], y: [0, -18, 0] }}
+          animate={{ x: [0, 32, 0], y: [0, -20, 0] }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
           className="absolute right-4 top-20 h-44 w-44 rounded-full bg-blue-500/25 blur-3xl"
-          animate={{ x: [0, -24, 0], y: [0, 24, 0] }}
+          animate={{ x: [0, -28, 0], y: [0, 28, 0] }}
           transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
           className="absolute bottom-10 left-1/3 h-36 w-36 rounded-full bg-indigo-400/20 blur-3xl"
-          animate={{ scale: [1, 1.16, 1], opacity: [0.45, 0.7, 0.45] }}
+          animate={{ scale: [1, 1.2, 1], opacity: [0.45, 0.72, 0.45] }}
           transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
         />
 
+        {/* Floating inner panel */}
         <motion.div
           className="absolute inset-x-8 top-8 rounded-[24px] border border-white/10 bg-white/8 backdrop-blur-sm"
-          animate={{ y: [0, -6, 0] }}
+          animate={{ y: [0, -7, 0] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
           style={{ transform: "translateZ(60px)" }}
         >
@@ -207,21 +252,21 @@ function BackgroundStage({ progress }) {
               Logistics Clarity Engine
             </div>
             <div className="rounded-full border border-cyan-300/30 bg-cyan-300/10 px-3 py-1 text-xs text-cyan-200">
-              premium hero film
+              7-day delivery
             </div>
           </div>
           <div className="grid gap-4 p-5 md:grid-cols-[1.2fr_0.8fr]">
             <div className="rounded-[22px] border border-white/10 bg-slate-950/55 p-5">
               <div className="mb-4 flex items-center gap-2 text-sm text-slate-300">
                 <Waves className="h-4 w-4 text-cyan-300" />
-                Clear buyer understanding path
+                Prospect journey
               </div>
               <div className="space-y-4">
                 {[
                   "Complex service offer",
-                  "Clear visual explanation",
-                  "Faster buyer understanding",
-                  "Higher-quality interest",
+                  "90-sec visual explanation",
+                  "Prospect self-qualifies",
+                  "Sales call already sold",
                 ].map((item, index) => (
                   <motion.div
                     key={item}
@@ -243,12 +288,12 @@ function BackgroundStage({ progress }) {
                 animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
               >
-                <div className="text-sm text-slate-300">Message clarity</div>
-                <div className="mt-3 text-4xl font-bold text-white">+73%</div>
+                <div className="text-sm text-slate-300">Discovery call time saved</div>
+                <div className="mt-3 text-4xl font-bold text-white">−45 min</div>
                 <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
                   <motion.div
                     className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-blue-400 to-indigo-400"
-                    animate={{ width: ["38%", "82%", "64%", "88%"] }}
+                    animate={{ width: ["38%", "85%", "62%", "90%"] }}
                     transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
                   />
                 </div>
@@ -258,7 +303,7 @@ function BackgroundStage({ progress }) {
                 animate={{ y: [0, 8, 0] }}
                 transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
               >
-                <div className="text-sm text-slate-300">Ideal use cases</div>
+                <div className="text-sm text-slate-300">Built for</div>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {["3PL", "Freight", "Warehousing", "Customs"].map((tag) => (
                     <span
@@ -274,6 +319,7 @@ function BackgroundStage({ progress }) {
           </div>
         </motion.div>
 
+        {/* Bottom floating bar */}
         <motion.div
           className="absolute bottom-8 left-8 right-8 rounded-[24px] border border-white/10 bg-white/5 px-6 py-5 backdrop-blur-sm"
           animate={{ y: [0, 8, 0] }}
@@ -284,7 +330,7 @@ function BackgroundStage({ progress }) {
             <div>
               <div className="text-sm uppercase tracking-[0.2em] text-cyan-200/80">Visual movement</div>
               <div className="mt-2 text-xl font-semibold text-white">
-                A premium visual experience built around a tailored logistics hero film
+                Cinematic logistics motion — done in 7 days
               </div>
             </div>
             <div className="flex items-center gap-2 text-sm text-slate-200">
@@ -298,16 +344,18 @@ function BackgroundStage({ progress }) {
   );
 }
 
+// ─── Floating Text Wrapper ────────────────────────────────────────────────────
+
 function FloatingText({ children, delay = 0, className = "" }) {
   return (
     <motion.div
       className={className}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, delay }}
+      transition={{ duration: 0.9, delay, ease: [0.16, 1, 0.3, 1] }}
     >
       <motion.div
-        animate={{ y: [0, -4, 0] }}
+        animate={{ y: [0, -5, 0] }}
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay }}
       >
         {children}
@@ -316,16 +364,22 @@ function FloatingText({ children, delay = 0, className = "" }) {
   );
 }
 
+// ─── Scroll Reactive Section ──────────────────────────────────────────────────
+
 function ScrollReactiveSection({ id, className = "", children }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["start 85%", "end 15%"],
+    offset: ["start 88%", "end 12%"],
   });
 
-  const y = useTransform(scrollYProgress, [0, 0.5, 1], [80, 0, -60]);
-  const opacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0.25, 1, 1, 0.55]);
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.96, 1, 0.985]);
+  const rawY = useTransform(scrollYProgress, [0, 0.5, 1], [90, 0, -65]);
+  const rawOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0.2, 1, 1, 0.5]);
+  const rawScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.95, 1, 0.985]);
+
+  const y = useSpring(rawY, { stiffness: 55, damping: 22 });
+  const opacity = useSpring(rawOpacity, { stiffness: 55, damping: 22 });
+  const scale = useSpring(rawScale, { stiffness: 55, damping: 22 });
 
   return (
     <motion.section id={id} ref={ref} style={{ y, opacity, scale }} className={className}>
@@ -333,6 +387,8 @@ function ScrollReactiveSection({ id, className = "", children }) {
     </motion.section>
   );
 }
+
+// ─── Main Landing Page ────────────────────────────────────────────────────────
 
 export default function LandingPage() {
   const heroRef = useRef(null);
@@ -345,8 +401,8 @@ export default function LandingPage() {
   });
 
   const progressScaleX = useTransform(scrollYProgress, [0, 1], [0, 1]);
-  const heroTextY = useTransform(heroProgress, [0, 1], [0, -110]);
-  const heroTextOpacity = useTransform(heroProgress, [0, 0.8, 1], [1, 0.95, 0.55]);
+  const heroTextY = useTransform(heroProgress, [0, 1], [0, -120]);
+  const heroTextOpacity = useTransform(heroProgress, [0, 0.75, 1], [1, 0.9, 0.5]);
   const leadRecipientEmail = "isa@nexapixelai.com";
 
   const handleLeadSubmit = async (event) => {
@@ -360,9 +416,7 @@ export default function LandingPage() {
     try {
       const response = await fetch(`https://formsubmit.co/ajax/${leadRecipientEmail}`, {
         method: "POST",
-        headers: {
-          Accept: "application/json",
-        },
+        headers: { Accept: "application/json" },
         body: formData,
       });
 
@@ -375,7 +429,7 @@ export default function LandingPage() {
       form.reset();
       setSubmitState({
         type: "success",
-        message: "Thanks — your details have been sent. We’ll review them and reach out if this looks like a fit.",
+        message: "You're in. We'll build your free storyboard concept and send it to your email within 48 hours.",
       });
     } catch (error) {
       setSubmitState({
@@ -389,39 +443,58 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen overflow-hidden bg-slate-950 text-white">
+      {/* Global background */}
       <div className="fixed inset-0 -z-20 bg-[radial-gradient(circle_at_top_left,rgba(6,182,212,0.16),transparent_28%),radial-gradient(circle_at_top_right,rgba(59,130,246,0.14),transparent_24%),radial-gradient(circle_at_bottom_center,rgba(99,102,241,0.14),transparent_30%),linear-gradient(180deg,#020617_0%,#0f172a_40%,#020617_100%)]" />
-      <motion.div className="fixed left-0 right-0 top-0 z-[60] h-[2px] origin-left bg-gradient-to-r from-cyan-300 via-blue-400 to-indigo-400" style={{ scaleX: progressScaleX }} />
+
+      {/* Scroll progress bar */}
+      <motion.div
+        className="fixed left-0 right-0 top-0 z-[60] h-[2px] origin-left bg-gradient-to-r from-cyan-300 via-blue-400 to-indigo-400"
+        style={{ scaleX: progressScaleX }}
+      />
+
       <SectionGlow />
 
+      {/* ── Header ── */}
       <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/65 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <motion.div initial={{ opacity: 0, y: -14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+          <motion.div
+            initial={{ opacity: 0, y: -14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          >
             <div className="text-xl font-bold tracking-[0.18em] text-white">NEXA-PIXEL</div>
             <div className="mt-1 text-xs text-slate-400">Explainer videos for logistics & supply chain companies</div>
           </motion.div>
           <motion.a
             href="#interest-form"
-            whileHover={{ scale: 1.04, y: -2 }}
-            whileTap={{ scale: 0.98 }}
+            initial={{ opacity: 0, y: -14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.97 }}
             className="inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-5 py-3 text-sm font-semibold text-cyan-100 shadow-[0_10px_40px_rgba(34,211,238,0.12)] transition"
           >
-            See if this fits
+            Get Free Storyboard
             <ArrowRight className="h-4 w-4" />
           </motion.a>
         </div>
       </header>
 
       <main>
+        {/* ── Hero Section ── */}
         <section ref={heroRef} className="relative overflow-hidden">
           <div className="mx-auto grid max-w-7xl gap-8 px-6 py-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-center lg:gap-10 lg:py-12">
             <motion.div className="relative z-10" style={{ y: heroTextY, opacity: heroTextOpacity }}>
+
+              {/* Eyebrow */}
               <FloatingText delay={0.1}>
                 <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-white/5 px-4 py-2 text-sm text-cyan-200 backdrop-blur-sm">
                   <Waves className="h-4 w-4" />
-                  For small and mid-sized logistics teams
+                  For B2B Logistics & Supply Chain Teams
                 </div>
               </FloatingText>
 
+              {/* Main Headline */}
               <motion.h1
                 className="max-w-2xl text-4xl font-black leading-[0.95] tracking-tight md:text-5xl lg:text-6xl"
                 initial="hidden"
@@ -429,72 +502,96 @@ export default function LandingPage() {
                 variants={fadeUp}
                 custom={0.2}
               >
-                Explain complex logistics services with
+                Stop losing 45 minutes on discovery calls
                 <motion.span
                   className="mt-2 block bg-gradient-to-r from-cyan-300 via-blue-300 to-indigo-300 bg-clip-text text-transparent"
                   animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
                   transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
                   style={{ backgroundSize: "200% 200%" }}
                 >
-                  clear 60–90 second videos.
+                  explaining what you do.
                 </motion.span>
               </motion.h1>
 
+              {/* Sub-headline */}
               <motion.p
-                className="mt-4 max-w-xl text-base leading-7 text-slate-300 md:text-lg"
+                className="mt-5 max-w-xl text-base leading-7 text-slate-300 md:text-lg"
                 initial="hidden"
                 animate="show"
                 variants={fadeUp}
                 custom={0.35}
               >
-                We produce clear, conversion-focused explainer videos for small and medium logistics and supply chain businesses, so the right buyers understand your offer faster and are more likely to express interest.
+                We turn complex logistics services into clear, 90-second visual assets. Prospects understand your offer instantly, qualify themselves, and enter your sales cycle ready to buy.
               </motion.p>
 
+              {/* CTA Buttons */}
               <motion.div
-                className="mt-6 flex flex-col gap-3 sm:flex-row"
+                className="mt-7 flex flex-col gap-3 sm:flex-row"
                 initial="hidden"
                 animate="show"
                 variants={fadeUp}
                 custom={0.5}
               >
-                <motion.a
-                  href="#interest-form"
-                  whileHover={{ scale: 1.03, y: -2 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 px-7 py-4 text-base font-semibold text-white shadow-[0_18px_60px_rgba(59,130,246,0.35)]"
-                >
-                  See if this fits
+                <ShimmerButton href="#interest-form">
+                  Get a Free Storyboard Concept
                   <ChevronRight className="h-4 w-4" />
-                </motion.a>
+                </ShimmerButton>
                 <motion.a
                   href="#how-it-works"
                   whileHover={{ scale: 1.03, y: -2 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileTap={{ scale: 0.97 }}
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-7 py-4 text-base font-semibold text-white backdrop-blur-md"
                 >
-                  See the Process
+                  See How It Works
                   <Play className="h-4 w-4" />
                 </motion.a>
               </motion.div>
 
+              {/* Trust Bar */}
+              <motion.div
+                className="mt-8 flex flex-wrap gap-3"
+                initial="hidden"
+                animate="show"
+                variants={fadeUp}
+                custom={0.62}
+              >
+                {[
+                  { icon: Clock, label: "7-Day Delivery" },
+                  { icon: CheckCircle2, label: "Done-For-You Scripting" },
+                  { icon: Zap, label: "Built for Logistics" },
+                ].map(({ icon: Icon, label }) => (
+                  <div
+                    key={label}
+                    className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-300 backdrop-blur-sm"
+                  >
+                    <Icon className="h-3.5 w-3.5 text-cyan-300" />
+                    {label}
+                  </div>
+                ))}
+              </motion.div>
+
+              {/* Stat Cards */}
               <motion.div
                 className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-3 lg:gap-6"
                 initial="hidden"
                 animate="show"
-                variants={fadeUp}
+                variants={staggerContainer}
                 custom={0.65}
               >
                 {[
-                  ["60–90 Seconds", "Short, focused explainer videos"],
-                  ["Clearer Buyer Understanding", "Complex services explained with clarity"],
-                  ["Built for SMB Logistics", "Made for growing logistics and supply chain teams"],
+                  ["90 Seconds", "Prospects understand your full offer before the first call"],
+                  ["Self-Qualifying Leads", "Buyers arrive on the call already sold on the mechanism"],
+                  ["7-Day Turnaround", "Script, visuals, and final asset — done for you, fast"],
                 ].map(([title, copy], index) => (
                   <motion.div
                     key={title}
-                    variants={cardLift}
-                    initial="rest"
+                    variants={staggerItem}
                     whileHover="hover"
-                    className="rounded-[24px] border border-white/10 bg-white/5 px-5 py-6 backdrop-blur-xl [transform-style:preserve-3d]"
+                    initial="rest"
+                    animate="rest"
+                    // @ts-ignore
+                    whileHoverVariants={cardLift}
+                    className="rounded-[24px] border border-white/10 bg-white/5 px-5 py-6 backdrop-blur-xl [transform-style:preserve-3d] transition-transform duration-300 hover:-translate-y-2 hover:scale-[1.02]"
                   >
                     <motion.div
                       className="mb-3 h-1.5 w-14 rounded-full bg-gradient-to-r from-cyan-300 via-blue-400 to-indigo-400"
@@ -508,56 +605,94 @@ export default function LandingPage() {
               </motion.div>
             </motion.div>
 
+            {/* Hero Card */}
             <motion.div
               className="w-full self-start lg:justify-self-end"
-              initial={{ opacity: 0, scale: 0.96, y: 20 }}
+              initial={{ opacity: 0, scale: 0.95, y: 24 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 1.1, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
             >
               <BackgroundStage progress={heroProgress} />
             </motion.div>
           </div>
         </section>
 
+        {/* ── Problem Section ── */}
+        <ScrollReactiveSection className="relative py-24">
+          <SectionGlow />
+          <div className="mx-auto max-w-7xl px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.25 }}
+              transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+              className="relative overflow-hidden rounded-[36px] border border-rose-400/10 bg-gradient-to-r from-slate-900 via-slate-900/80 to-slate-900 px-8 py-12 shadow-[0_30px_120px_rgba(8,47,73,0.2)]"
+            >
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_50%,rgba(239,68,68,0.08),transparent_28%),radial-gradient(circle_at_85%_30%,rgba(99,102,241,0.1),transparent_24%)]" />
+              <motion.div
+                className="absolute inset-y-0 left-[-20%] w-[40%] bg-gradient-to-r from-transparent via-white/6 to-transparent blur-2xl"
+                animate={{ x: ["0%", "280%"] }}
+                transition={{ duration: 9, repeat: Infinity, ease: "linear" }}
+              />
+              <div className="relative max-w-3xl">
+                <div className="text-sm font-semibold uppercase tracking-[0.25em] text-rose-300/80">The Problem</div>
+                <h2 className="mt-4 text-3xl font-bold tracking-tight text-white md:text-5xl">
+                  Great logistics offers are dying in translation.
+                </h2>
+                <p className="mt-5 text-lg leading-8 text-slate-300">
+                  Whether you run a 3PL, freight forwarding, or customs brokerage, your service is complex. When prospects land on your site or take a first call, they are met with industry jargon and tangled processes. They get confused. They bounce. Or worse — your sales team wastes 45 minutes on a discovery call just explaining the basics to a lead who was never qualified in the first place.
+                </p>
+                <p className="mt-4 text-lg font-semibold text-white">
+                  You don't need a longer pitch. You need a faster path to clarity.
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        </ScrollReactiveSection>
+
+        {/* ── How It Works Section ── */}
         <ScrollReactiveSection id="how-it-works" className="relative py-24">
           <SectionGlow />
           <div className="mx-auto max-w-7xl px-6">
             <div className="max-w-3xl">
-              <div className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-200">What we do</div>
+              <div className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-200">The Solution</div>
               <h2 className="mt-4 text-3xl font-bold tracking-tight text-white md:text-5xl">
-                Explainer videos built to clarify complex logistics offers.
+                The Logistics Clarity Engine.
               </h2>
               <p className="mt-5 text-lg leading-8 text-slate-300">
-                From freight forwarding to warehousing, customs, fulfillment, and cross-border operations, we turn difficult-to-explain services into clear 60–90 second videos that help buyers understand your value quickly.
+                We replace confusion with a premium, 90-second visual explanation. No busy stock footage. No talking heads. Just clean, cinematic motion that maps out exactly how your supply chain solution works — so prospects qualify themselves before the first call.
               </p>
             </div>
 
             <div className="mt-14 grid gap-6 md:grid-cols-3">
               {[
                 {
-                  title: "1. Clarify the message",
-                  copy: "We identify what buyers usually find confusing and shape it into a simple, credible message.",
+                  label: "Step 1",
+                  title: "Clarify the Message",
+                  copy: "We strip away the jargon. We identify exactly what your buyers find confusing and shape it into a sharp, undeniable 90-second script.",
                 },
                 {
-                  title: "2. Produce the video",
-                  copy: "We create a 60–90 second explainer video that shows what you do, how it works, and why it matters.",
+                  label: "Step 2",
+                  title: "Build the Visual",
+                  copy: "We produce a premium cinematic asset using route-line overlays, container motion, and clean UI that makes your complex operation look effortless.",
                 },
                 {
-                  title: "3. Validate demand",
-                  copy: "Use the video to make your offer easier to understand and collect interest from qualified businesses.",
+                  label: "Step 3",
+                  title: "Deploy & Close Faster",
+                  copy: "You embed the asset on your landing pages and in your cold outreach. Prospects watch, understand, and book a call already sold on the mechanism.",
                 },
               ].map((item, index) => (
                 <motion.div
                   key={item.title}
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 36 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.2 }}
-                  transition={{ duration: 0.7, delay: index * 0.12 }}
-                  whileHover={{ y: -12, rotateX: 6, rotateY: index === 1 ? 0 : index % 2 === 0 ? -5 : 5 }}
-                  className="rounded-[30px] border border-white/10 bg-white/5 p-7 backdrop-blur-xl shadow-[0_20px_80px_rgba(15,23,42,0.2)] [transform-style:preserve-3d]"
+                  transition={{ duration: 0.75, delay: index * 0.14, ease: [0.16, 1, 0.3, 1] }}
+                  whileHover={{ y: -14, rotateX: 6, rotateY: index === 1 ? 0 : index % 2 === 0 ? -5 : 5, scale: 1.02 }}
+                  className="rounded-[30px] border border-white/10 bg-white/5 p-7 shadow-[0_20px_80px_rgba(15,23,42,0.2)] backdrop-blur-xl [transform-style:preserve-3d] transition-all duration-300"
                 >
                   <div className="mb-4 inline-flex rounded-full border border-cyan-300/15 bg-cyan-300/10 px-3 py-1 text-sm text-cyan-100">
-                    Process {index + 1}
+                    {item.label}
                   </div>
                   <div className="text-xl font-bold text-white">{item.title}</div>
                   <p className="mt-4 leading-7 text-slate-300">{item.copy}</p>
@@ -567,32 +702,36 @@ export default function LandingPage() {
           </div>
         </ScrollReactiveSection>
 
+        {/* ── Who It's For Section ── */}
         <ScrollReactiveSection className="relative py-24">
           <div className="mx-auto grid max-w-7xl gap-10 px-6 lg:grid-cols-2 lg:items-start">
             <div>
-              <div className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-200">Who it is for</div>
+              <div className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-200">Who It's For</div>
               <h2 className="mt-4 text-3xl font-bold tracking-tight text-white md:text-5xl">
-                Built for logistics and supply chain businesses with complex services to explain.
+                Built exclusively for the supply chain.
               </h2>
+              <p className="mt-5 text-lg leading-8 text-slate-300">
+                We don't make videos for local bakeries or SaaS startups. We only build visual assets for companies that move physical goods and data. If your service is hard to explain, we are the translation layer.
+              </p>
               <div className="mt-8 grid gap-4 sm:grid-cols-2">
                 {[
-                  "Freight forwarders",
-                  "3PL providers",
-                  "Warehousing companies",
-                  "Customs brokers",
-                  "Cold chain logistics",
-                  "Fulfillment providers",
-                  "Last-mile delivery companies",
-                  "Supply chain software businesses",
+                  "Freight Forwarders",
+                  "3PL Providers",
+                  "Warehousing Operations",
+                  "Customs Brokers",
+                  "Cold Chain Logistics",
+                  "Fulfillment Centers",
+                  "Last-Mile Delivery",
+                  "Supply Chain Tech",
                 ].map((item, index) => (
                   <motion.div
                     key={item}
-                    initial={{ opacity: 0, scale: 0.94 }}
+                    initial={{ opacity: 0, scale: 0.93 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true, amount: 0.2 }}
-                    transition={{ duration: 0.45, delay: index * 0.05 }}
-                    whileHover={{ y: -6, scale: 1.02 }}
-                    className="rounded-[22px] border border-white/10 bg-white/5 px-5 py-4 text-slate-100 backdrop-blur-sm"
+                    transition={{ duration: 0.45, delay: index * 0.05, ease: [0.16, 1, 0.3, 1] }}
+                    whileHover={{ y: -6, scale: 1.03 }}
+                    className="rounded-[22px] border border-white/10 bg-white/5 px-5 py-4 text-slate-100 backdrop-blur-sm transition-all duration-300"
                   >
                     {item}
                   </motion.div>
@@ -600,6 +739,7 @@ export default function LandingPage() {
               </div>
             </div>
 
+            {/* What You Get Panel */}
             <div className="rounded-[32px] border border-white/10 bg-gradient-to-br from-white/8 to-white/5 p-8 backdrop-blur-xl">
               <div className="mb-5 flex items-center gap-3 text-cyan-100">
                 <Boxes className="h-5 w-5" />
@@ -607,10 +747,10 @@ export default function LandingPage() {
               </div>
               <div className="space-y-4 text-slate-300">
                 {[
-                  "Early access to our explainer video offer for logistics and supply chain businesses",
-                  "Sample concepts and early launch updates",
-                  "A quick way to see whether the service fits your business",
-                  "Priority contact when new production slots open",
+                  "A custom 90-second cinematic explainer video built for your specific logistics offer",
+                  "Done-for-you scripting — we research your service and write the narrative",
+                  "7-day delivery from brief to final asset, ready to deploy",
+                  "Embed-ready format for your website, cold outreach, and LinkedIn",
                 ].map((item, index) => (
                   <motion.div
                     key={item}
@@ -627,59 +767,62 @@ export default function LandingPage() {
           </div>
         </ScrollReactiveSection>
 
+        {/* ── Promise Banner ── */}
         <ScrollReactiveSection className="relative py-20">
           <div className="mx-auto max-w-7xl px-6">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.25 }}
-              transition={{ duration: 0.75 }}
+              transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
               className="relative overflow-hidden rounded-[36px] border border-cyan-300/10 bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 px-8 py-12 shadow-[0_30px_120px_rgba(8,47,73,0.25)]"
             >
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(34,211,238,0.18),transparent_22%),radial-gradient(circle_at_80%_50%,rgba(99,102,241,0.18),transparent_24%)]" />
               <motion.div
                 className="absolute inset-y-0 left-[-20%] w-[40%] bg-gradient-to-r from-transparent via-white/10 to-transparent blur-2xl"
-                animate={{ x: ["0%", "260%"] }}
+                animate={{ x: ["0%", "280%"] }}
                 transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
               />
               <div className="relative max-w-3xl">
-                <div className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-200">The promise</div>
+                <div className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-200">The Guarantee</div>
                 <h2 className="mt-4 text-3xl font-bold tracking-tight text-white md:text-5xl">
-                  Help the right businesses understand your solution faster.
+                  If prospects don't understand your offer faster, we fix it free.
                 </h2>
                 <p className="mt-5 text-lg leading-8 text-slate-300">
-                  When your solution is easier to understand, it becomes easier for qualified buyers to trust it, remember it, and take the next step.
+                  We call it the Clarity Guarantee. If your video doesn't make your offer immediately clear to a cold prospect, we revise it until it does — at no extra cost. We only win when your prospects understand.
                 </p>
               </div>
             </motion.div>
           </div>
         </ScrollReactiveSection>
 
+        {/* ── Lead Form Section ── */}
         <ScrollReactiveSection id="interest-form" className="relative py-24">
           <SectionGlow />
           <div className="mx-auto max-w-4xl px-6">
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 36 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.8 }}
+              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
               className="rounded-[36px] border border-white/10 bg-white/5 p-8 shadow-[0_30px_120px_rgba(15,23,42,0.28)] backdrop-blur-2xl md:p-12"
             >
               <div className="mx-auto max-w-2xl text-center">
-                <h2 className="mt-4 text-3xl font-bold tracking-tight text-white md:text-5xl">See if this fits</h2>
+                <div className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-200">Zero Risk Offer</div>
+                <h2 className="mt-4 text-3xl font-bold tracking-tight text-white md:text-5xl">
+                  Let us map out your offer — for free.
+                </h2>
                 <p className="mt-5 text-lg leading-8 text-slate-300">
-                  If you run a logistics or supply chain business and want a clearer way to explain your solution, leave your details and we’ll let you know when early access opens.
+                  Send us your website and we'll build a custom 15-second storyboard concept for your specific logistics offer — completely free. If you like it, we talk. If you don't, you keep it. Zero risk.
                 </p>
               </div>
 
-              <form
-                className="mt-10 grid gap-5"
-                onSubmit={handleLeadSubmit}
-              >
-                <input type="hidden" name="_subject" value="New NEXA-PIXEL lead" />
+              <form className="mt-10 grid gap-5" onSubmit={handleLeadSubmit}>
+                <input type="hidden" name="_subject" value="New NEXA-PIXEL storyboard request" />
                 <input type="hidden" name="_template" value="table" />
                 <input type="hidden" name="_captcha" value="false" />
                 <input type="text" name="_honey" className="hidden" tabIndex={-1} autoComplete="off" />
+
                 <div className="grid gap-5 md:grid-cols-2">
                   <div>
                     <label className="mb-2 block text-sm font-medium text-slate-200">Full Name</label>
@@ -703,60 +846,40 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                <div className="grid gap-5 md:grid-cols-2">
-                  <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-200">Company Name</label>
-                    <input
-                      type="text"
-                      name="company"
-                      required
-                      placeholder="Your company"
-                      className="w-full rounded-[22px] border border-white/10 bg-slate-950/60 px-4 py-4 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-300/20"
-                    />
-                  </div>
-                  <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-200">Business Type</label>
-                    <select
-                      name="business_type"
-                      required
-                      className="w-full rounded-[22px] border border-white/10 bg-slate-950/60 px-4 py-4 text-white outline-none transition focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-300/20"
-                    >
-                      <option>Freight Forwarder</option>
-                      <option>3PL</option>
-                      <option>Warehousing</option>
-                      <option>Customs Brokerage</option>
-                      <option>Fulfillment</option>
-                      <option>Cold Chain</option>
-                      <option>Supply Chain Software</option>
-                      <option>Other</option>
-                    </select>
-                  </div>
-                </div>
-
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-200">What do you need help explaining?</label>
-                  <textarea
-                    rows={5}
-                    name="message"
+                  <label className="mb-2 block text-sm font-medium text-slate-200">Company Website</label>
+                  <input
+                    type="url"
+                    name="website"
                     required
-                    placeholder="Tell us a little about your service, process, or offer"
+                    placeholder="https://yourcompany.com"
                     className="w-full rounded-[22px] border border-white/10 bg-slate-950/60 px-4 py-4 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-300/20"
                   />
                 </div>
 
-                <motion.button
-                  type="submit"
-                  disabled={isSubmitting}
-                  whileHover={isSubmitting ? {} : { scale: 1.02, y: -2 }}
-                  whileTap={isSubmitting ? {} : { scale: 0.985 }}
-                  className="mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 px-6 py-4 text-base font-semibold text-white shadow-[0_18px_70px_rgba(59,130,246,0.35)] disabled:cursor-not-allowed disabled:opacity-70"
-                >
-                  {isSubmitting ? "Sending..." : "See if this fits"}
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-200">
+                    What's the #1 thing prospects misunderstand about your service?{" "}
+                    <span className="text-slate-500">(optional)</span>
+                  </label>
+                  <textarea
+                    rows={4}
+                    name="message"
+                    placeholder="e.g. They don't realise we handle customs clearance end-to-end, not just freight..."
+                    className="w-full rounded-[22px] border border-white/10 bg-slate-950/60 px-4 py-4 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-300/20"
+                  />
+                </div>
+
+                <ShimmerButton href="#" className="mt-2 w-full">
+                  {isSubmitting ? "Sending..." : "Request Free Storyboard Concept"}
                   <ArrowRight className="h-4 w-4" />
-                </motion.button>
+                </ShimmerButton>
 
                 {submitState.type !== "idle" && (
-                  <div
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
                     className={`rounded-[22px] border px-4 py-4 text-sm leading-6 ${
                       submitState.type === "success"
                         ? "border-emerald-400/25 bg-emerald-400/10 text-emerald-100"
@@ -764,11 +887,11 @@ export default function LandingPage() {
                     }`}
                   >
                     {submitState.message}
-                  </div>
+                  </motion.div>
                 )}
 
                 <p className="text-center text-sm text-slate-400">
-                  No spam. Just early access updates, sample ideas, and a chance to see whether our explainer video service is a fit for your business. Every submission is sent to isa@nexapixelai.com.
+                  No credit card required. You'll receive your custom storyboard concept via email within 48 hours.
                 </p>
               </form>
             </motion.div>
@@ -776,19 +899,22 @@ export default function LandingPage() {
         </ScrollReactiveSection>
       </main>
 
+      {/* ── Footer ── */}
       <footer className="border-t border-white/10 bg-slate-950/50 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-4 px-6 py-8 md:flex-row md:items-center">
           <div>
             <div className="font-bold tracking-[0.16em] text-white">NEXA-PIXEL</div>
-            <div className="text-sm text-slate-400">Helping logistics and supply chain businesses explain complex solutions clearly with short explainer videos.</div>
+            <div className="text-sm text-slate-400">
+              Turning complex logistics offers into 90-second visual assets that close deals faster.
+            </div>
           </div>
           <div className="flex items-center gap-4 text-sm text-slate-400">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2">
-  <Film className="h-4 w-4 text-cyan-300" />
-  Logistics-focused hero film
-</div>
+              <Film className="h-4 w-4 text-cyan-300" />
+              7-day delivery
+            </div>
             <a href="#interest-form" className="font-semibold text-cyan-200 transition hover:text-white">
-              See if this fits
+              Get Free Storyboard →
             </a>
           </div>
         </div>
