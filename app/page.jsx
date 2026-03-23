@@ -1,7 +1,13 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { motion, useScroll, useTransform, useSpring, AnimatePresence } from "framer-motion";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useSpring,
+  AnimatePresence,
+} from "framer-motion";
 import {
   ArrowRight,
   Play,
@@ -17,8 +23,6 @@ import {
   Mail,
 } from "lucide-react";
 
-// ─── Config ───────────────────────────────────────────────────────────────────
-
 const WEB3FORMS_KEY = "ca415c8f-0773-4391-8564-11a8d5ffc2a8";
 const HERO_VIDEO_SRC = "/logistics-flow-hero.mp4";
 
@@ -32,8 +36,6 @@ const HERO_VIDEO_SHOTLIST = [
   "Cross-border or port-style movement shot with cranes, stacks, and depth",
   "Final calm wide shot with elegant motion that feels premium and trustworthy",
 ];
-
-// ─── Animation Variants ───────────────────────────────────────────────────────
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
@@ -60,17 +62,7 @@ const staggerItem = {
   },
 };
 
-// ─── Floating Orb ─────────────────────────────────────────────────────────────
-
-function FloatingOrb({
-  className,
-  delay = 0,
-  duration = 12,
-}: {
-  className: string;
-  delay?: number;
-  duration?: number;
-}) {
+function FloatingOrb({ className, delay = 0, duration = 12 }) {
   return (
     <motion.div
       className={className}
@@ -106,8 +98,6 @@ function SectionGlow() {
   );
 }
 
-// ─── Animated Grid ────────────────────────────────────────────────────────────
-
 function AnimatedGrid() {
   return (
     <motion.div
@@ -125,17 +115,7 @@ function AnimatedGrid() {
   );
 }
 
-// ─── Shimmer Button (anchor — navigation only, NOT for form submit) ───────────
-
-function ShimmerButton({
-  href,
-  children,
-  className = "",
-}: {
-  href: string;
-  children: React.ReactNode;
-  className?: string;
-}) {
+function ShimmerButton({ href, children, className = "" }) {
   return (
     <motion.a
       href={href}
@@ -158,9 +138,7 @@ function ShimmerButton({
   );
 }
 
-// ─── Hero Video Layer ─────────────────────────────────────────────────────────
-
-function HeroVideoLayer({ src }: { src: string }) {
+function HeroVideoLayer({ src }) {
   const [videoFailed, setVideoFailed] = useState(false);
 
   return (
@@ -184,10 +162,8 @@ function HeroVideoLayer({ src }: { src: string }) {
         </video>
       )}
 
-      {/* Colour overlay */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(56,189,248,0.22),transparent_24%),radial-gradient(circle_at_80%_24%,rgba(59,130,246,0.22),transparent_18%),radial-gradient(circle_at_55%_75%,rgba(99,102,241,0.18),transparent_22%),linear-gradient(180deg,rgba(2,6,23,0.18),rgba(2,6,23,0.88))]" />
 
-      {/* Fallback gradient when no video */}
       {videoFailed && (
         <motion.div
           className="absolute inset-0"
@@ -212,8 +188,7 @@ function HeroVideoLayer({ src }: { src: string }) {
               <span className="font-semibold text-white">
                 logistics-flow-hero.mp4
               </span>{" "}
-              to{" "}
-              <span className="font-semibold text-white">/public</span> to
+              to <span className="font-semibold text-white">/public</span> to
               display the hero film.
             </p>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
@@ -233,13 +208,7 @@ function HeroVideoLayer({ src }: { src: string }) {
   );
 }
 
-// ─── Background Stage (Hero 3-D Card) ────────────────────────────────────────
-
-function BackgroundStage({
-  progress,
-}: {
-  progress: ReturnType<typeof useScroll>["scrollYProgress"];
-}) {
+function BackgroundStage({ progress }) {
   const rawY = useTransform(progress, [0, 1], [0, 130]);
   const rawScale = useTransform(progress, [0, 1], [1, 0.91]);
   const rawRotateX = useTransform(progress, [0, 1], [8, 0]);
@@ -262,7 +231,6 @@ function BackgroundStage({
         <HeroVideoLayer src={HERO_VIDEO_SRC} />
         <AnimatedGrid />
 
-        {/* Ambient orbs */}
         <motion.div
           className="absolute -left-8 top-12 h-40 w-40 rounded-full bg-cyan-400/25 blur-3xl"
           animate={{ x: [0, 32, 0], y: [0, -20, 0] }}
@@ -279,7 +247,6 @@ function BackgroundStage({
           transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
         />
 
-        {/* Floating inner panel */}
         <motion.div
           className="absolute inset-x-8 top-8 rounded-[24px] border border-white/10 bg-white/[0.08] backdrop-blur-sm"
           animate={{ y: [0, -7, 0] }}
@@ -297,7 +264,6 @@ function BackgroundStage({
           </div>
 
           <div className="grid gap-4 p-5 md:grid-cols-[1.2fr_0.8fr]">
-            {/* Steps */}
             <div className="rounded-[22px] border border-white/10 bg-slate-950/55 p-5">
               <div className="mb-4 flex items-center gap-2 text-sm text-slate-300">
                 <Waves className="h-4 w-4 text-cyan-300" />
@@ -330,12 +296,15 @@ function BackgroundStage({
               </div>
             </div>
 
-            {/* Stats */}
             <div className="space-y-4">
               <motion.div
                 className="rounded-[22px] border border-white/10 bg-white/5 p-5"
                 animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+                transition={{
+                  duration: 7,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
               >
                 <div className="text-sm text-slate-300">
                   Discovery call time saved
@@ -357,7 +326,11 @@ function BackgroundStage({
               <motion.div
                 className="rounded-[22px] border border-white/10 bg-white/5 p-5"
                 animate={{ y: [0, 8, 0] }}
-                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                transition={{
+                  duration: 8,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
               >
                 <div className="text-sm text-slate-300">Built for</div>
                 <div className="mt-4 flex flex-wrap gap-2">
@@ -375,7 +348,6 @@ function BackgroundStage({
           </div>
         </motion.div>
 
-        {/* Bottom bar */}
         <motion.div
           className="absolute bottom-8 left-8 right-8 rounded-[24px] border border-white/10 bg-white/5 px-6 py-5 backdrop-blur-sm"
           animate={{ y: [0, 8, 0] }}
@@ -402,17 +374,7 @@ function BackgroundStage({
   );
 }
 
-// ─── Floating Text Wrapper ────────────────────────────────────────────────────
-
-function FloatingText({
-  children,
-  delay = 0,
-  className = "",
-}: {
-  children: React.ReactNode;
-  delay?: number;
-  className?: string;
-}) {
+function FloatingText({ children, delay = 0, className = "" }) {
   return (
     <motion.div
       className={className}
@@ -430,18 +392,8 @@ function FloatingText({
   );
 }
 
-// ─── Scroll Reactive Section ──────────────────────────────────────────────────
-
-function ScrollReactiveSection({
-  id,
-  className = "",
-  children,
-}: {
-  id?: string;
-  className?: string;
-  children: React.ReactNode;
-}) {
-  const ref = useRef<HTMLElement>(null);
+function ScrollReactiveSection({ id, className = "", children }) {
+  const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start 88%", "end 12%"],
@@ -471,8 +423,6 @@ function ScrollReactiveSection({
   );
 }
 
-// ─── Thank You State ──────────────────────────────────────────────────────────
-
 function ThankYouCard() {
   return (
     <motion.div
@@ -483,14 +433,12 @@ function ThankYouCard() {
       transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
       className="flex flex-col items-center gap-6 py-10 text-center"
     >
-      {/* Animated checkmark circle */}
       <motion.div
         initial={{ scale: 0, rotate: -20 }}
         animate={{ scale: 1, rotate: 0 }}
         transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
         className="relative flex h-20 w-20 items-center justify-center rounded-full border border-emerald-400/30 bg-emerald-400/10"
       >
-        {/* Pulse ring */}
         <motion.div
           className="absolute inset-0 rounded-full border border-emerald-400/40"
           animate={{ scale: [1, 1.5, 1], opacity: [0.6, 0, 0.6] }}
@@ -499,7 +447,6 @@ function ThankYouCard() {
         <CheckCircle className="h-9 w-9 text-emerald-300" />
       </motion.div>
 
-      {/* Heading */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -514,7 +461,6 @@ function ThankYouCard() {
         </p>
       </motion.div>
 
-      {/* What happens next */}
       <motion.div
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
@@ -550,7 +496,6 @@ function ThankYouCard() {
         </div>
       </motion.div>
 
-      {/* Soft close note */}
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -564,10 +509,8 @@ function ThankYouCard() {
   );
 }
 
-// ─── Main Landing Page ────────────────────────────────────────────────────────
-
 export default function LandingPage() {
-  const heroRef = useRef<HTMLElement>(null);
+  const heroRef = useRef(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
@@ -582,9 +525,7 @@ export default function LandingPage() {
   const heroTextY = useTransform(heroProgress, [0, 1], [0, -120]);
   const heroTextOpacity = useTransform(heroProgress, [0, 0.75, 1], [1, 0.9, 0.5]);
 
-  // ── Form Submit Handler ────────────────────────────────────────────────────
-
-  const handleLeadSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleLeadSubmit = async (event) => {
     event.preventDefault();
     const form = event.currentTarget;
     const formData = new FormData(form);
@@ -608,21 +549,19 @@ export default function LandingPage() {
       }
     } catch (error) {
       setSubmitError(
-        error instanceof Error ? error.message : "Something went wrong. Please try again."
+        error instanceof Error
+          ? error.message
+          : "Something went wrong. Please try again."
       );
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // ── Render ─────────────────────────────────────────────────────────────────
-
   return (
     <div className="min-h-screen overflow-hidden bg-slate-950 text-white">
-      {/* Global background gradient */}
       <div className="fixed inset-0 -z-20 bg-[radial-gradient(circle_at_top_left,rgba(6,182,212,0.16),transparent_28%),radial-gradient(circle_at_top_right,rgba(59,130,246,0.14),transparent_24%),radial-gradient(circle_at_bottom_center,rgba(99,102,241,0.14),transparent_30%),linear-gradient(180deg,#020617_0%,#0f172a_40%,#020617_100%)]" />
 
-      {/* Scroll progress bar */}
       <motion.div
         className="fixed left-0 right-0 top-0 z-[60] h-[2px] origin-left bg-gradient-to-r from-cyan-300 via-blue-400 to-indigo-400"
         style={{ scaleX: progressScaleX }}
@@ -630,9 +569,6 @@ export default function LandingPage() {
 
       <SectionGlow />
 
-      {/* ════════════════════════════════════════════════════════════════
-          HEADER
-      ════════════════════════════════════════════════════════════════ */}
       <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/65 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <motion.div
@@ -664,18 +600,12 @@ export default function LandingPage() {
       </header>
 
       <main>
-        {/* ════════════════════════════════════════════════════════════════
-            HERO SECTION
-        ════════════════════════════════════════════════════════════════ */}
         <section ref={heroRef} className="relative overflow-hidden">
           <div className="mx-auto grid max-w-7xl gap-8 px-6 py-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-center lg:gap-10 lg:py-12">
-
-            {/* Left column — copy */}
             <motion.div
               className="relative z-10"
               style={{ y: heroTextY, opacity: heroTextOpacity }}
             >
-              {/* Eyebrow */}
               <FloatingText delay={0.1}>
                 <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-white/5 px-4 py-2 text-sm text-cyan-200 backdrop-blur-sm">
                   <Waves className="h-4 w-4" />
@@ -683,7 +613,6 @@ export default function LandingPage() {
                 </div>
               </FloatingText>
 
-              {/* Headline */}
               <motion.h1
                 className="max-w-2xl text-4xl font-black leading-[0.95] tracking-tight md:text-5xl lg:text-6xl"
                 initial="hidden"
@@ -704,7 +633,6 @@ export default function LandingPage() {
                 </motion.span>
               </motion.h1>
 
-              {/* Sub-headline */}
               <motion.p
                 className="mt-5 max-w-xl text-base leading-7 text-slate-300 md:text-lg"
                 initial="hidden"
@@ -717,7 +645,6 @@ export default function LandingPage() {
                 themselves, and enter your sales cycle ready to buy.
               </motion.p>
 
-              {/* CTA Buttons */}
               <motion.div
                 className="mt-7 flex flex-col gap-3 sm:flex-row"
                 initial="hidden"
@@ -741,7 +668,6 @@ export default function LandingPage() {
                 </motion.a>
               </motion.div>
 
-              {/* Trust Bar */}
               <motion.div
                 className="mt-8 flex flex-wrap gap-3"
                 initial="hidden"
@@ -764,7 +690,6 @@ export default function LandingPage() {
                 ))}
               </motion.div>
 
-              {/* Stat Cards */}
               <motion.div
                 className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-3 lg:gap-6"
                 initial="hidden"
@@ -817,21 +742,21 @@ export default function LandingPage() {
               </motion.div>
             </motion.div>
 
-            {/* Right column — 3D hero card */}
             <motion.div
               className="w-full self-start lg:justify-self-end"
               initial={{ opacity: 0, scale: 0.95, y: 24 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 1.1, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              transition={{
+                duration: 1.1,
+                delay: 0.25,
+                ease: [0.16, 1, 0.3, 1],
+              }}
             >
               <BackgroundStage progress={heroProgress} />
             </motion.div>
           </div>
         </section>
 
-        {/* ════════════════════════════════════════════════════════════════
-            THE PROBLEM
-        ════════════════════════════════════════════════════════════════ */}
         <ScrollReactiveSection className="relative py-24">
           <SectionGlow />
           <div className="mx-auto max-w-7xl px-6">
@@ -873,9 +798,6 @@ export default function LandingPage() {
           </div>
         </ScrollReactiveSection>
 
-        {/* ════════════════════════════════════════════════════════════════
-            HOW IT WORKS
-        ════════════════════════════════════════════════════════════════ */}
         <ScrollReactiveSection id="how-it-works" className="relative py-24">
           <SectionGlow />
           <div className="mx-auto max-w-7xl px-6">
@@ -943,9 +865,6 @@ export default function LandingPage() {
           </div>
         </ScrollReactiveSection>
 
-        {/* ════════════════════════════════════════════════════════════════
-            WHO IT'S FOR
-        ════════════════════════════════════════════════════════════════ */}
         <ScrollReactiveSection className="relative py-24">
           <div className="mx-auto grid max-w-7xl gap-10 px-6 lg:grid-cols-2 lg:items-start">
             <div>
@@ -991,7 +910,6 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* What You Get */}
             <div className="rounded-[32px] border border-white/10 bg-gradient-to-br from-white/[0.08] to-white/5 p-8 backdrop-blur-xl">
               <div className="mb-5 flex items-center gap-3 text-cyan-100">
                 <Boxes className="h-5 w-5" />
@@ -1023,9 +941,6 @@ export default function LandingPage() {
           </div>
         </ScrollReactiveSection>
 
-        {/* ════════════════════════════════════════════════════════════════
-            CLARITY GUARANTEE BANNER
-        ════════════════════════════════════════════════════════════════ */}
         <ScrollReactiveSection className="relative py-20">
           <div className="mx-auto max-w-7xl px-6">
             <motion.div
@@ -1060,9 +975,6 @@ export default function LandingPage() {
           </div>
         </ScrollReactiveSection>
 
-        {/* ════════════════════════════════════════════════════════════════
-            LEAD FORM — Web3Forms
-        ════════════════════════════════════════════════════════════════ */}
         <ScrollReactiveSection id="interest-form" className="relative py-24">
           <SectionGlow />
           <div className="mx-auto max-w-4xl px-6">
@@ -1075,10 +987,8 @@ export default function LandingPage() {
             >
               <AnimatePresence mode="wait">
                 {submitted ? (
-                  /* ── Thank You State ── */
                   <ThankYouCard key="thankyou" />
                 ) : (
-                  /* ── Form State ── */
                   <motion.div
                     key="form"
                     initial={{ opacity: 1 }}
@@ -1104,7 +1014,6 @@ export default function LandingPage() {
                       className="mt-10 grid gap-5"
                       onSubmit={handleLeadSubmit}
                     >
-                      {/* Web3Forms hidden fields */}
                       <input
                         type="hidden"
                         name="subject"
@@ -1115,7 +1024,6 @@ export default function LandingPage() {
                         name="from_name"
                         value="Nexa Pixel Website"
                       />
-                      {/* Honeypot spam trap */}
                       <input
                         type="checkbox"
                         name="botcheck"
@@ -1123,7 +1031,6 @@ export default function LandingPage() {
                         style={{ display: "none" }}
                       />
 
-                      {/* Name + Email */}
                       <div className="grid gap-5 md:grid-cols-2">
                         <div>
                           <label className="mb-2 block text-sm font-medium text-slate-200">
@@ -1151,7 +1058,6 @@ export default function LandingPage() {
                         </div>
                       </div>
 
-                      {/* Website URL */}
                       <div>
                         <label className="mb-2 block text-sm font-medium text-slate-200">
                           Company Website
@@ -1165,11 +1071,10 @@ export default function LandingPage() {
                         />
                       </div>
 
-                      {/* Optional message */}
                       <div>
                         <label className="mb-2 block text-sm font-medium text-slate-200">
-                          What's the #1 thing prospects misunderstand about
-                          your service?{" "}
+                          What's the #1 thing prospects misunderstand about your
+                          service?{" "}
                           <span className="text-slate-500">(optional)</span>
                         </label>
                         <textarea
@@ -1180,7 +1085,6 @@ export default function LandingPage() {
                         />
                       </div>
 
-                      {/* ── Submit button — proper <button type="submit"> ── */}
                       <motion.button
                         type="submit"
                         disabled={isSubmitting}
@@ -1204,7 +1108,6 @@ export default function LandingPage() {
                         <ArrowRight className="h-4 w-4" />
                       </motion.button>
 
-                      {/* Error message */}
                       {submitError && (
                         <motion.div
                           initial={{ opacity: 0, y: 8 }}
@@ -1228,9 +1131,6 @@ export default function LandingPage() {
         </ScrollReactiveSection>
       </main>
 
-      {/* ════════════════════════════════════════════════════════════════
-          FOOTER
-      ════════════════════════════════════════════════════════════════ */}
       <footer className="border-t border-white/10 bg-slate-950/50 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-4 px-6 py-8 md:flex-row md:items-center">
           <div>
